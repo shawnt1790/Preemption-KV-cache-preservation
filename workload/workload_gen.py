@@ -29,7 +29,7 @@ import httpx
 import numpy as np
 
 FIELDS = ["req_id", "workload", "prefix_id", "session_id", "turn", "send_wall",
-          "ttft_s", "e2e_s", "output_chunks", "prompt_chars", "status"]
+          "ttft_s", "e2e_s", "output_chunks", "prompt_chars", "prompt_tokens", "status"]
 
 WORDS = ("cloud spot instance cache prefix token model server memory gpu request "
          "latency storage policy notice window block replica throughput cost "
@@ -43,10 +43,12 @@ def filler(n_words, rng):
 async def send(client, args, messages, meta, writer, fh):
     """Send one streaming request; record TTFT (first content token) and latency."""
     payload = {"model": args.model, "messages": messages, "max_tokens": args.max_tokens,
-               "temperature": 0, "stream": True}
+               "temperature": 0, "stream": True,
+               # ask vLLM to report exact token counts in the final chunk
+               "stream_options": {"include_usage": True}}
     wall = time.time()
     t0 = time.perf_counter()
-    ttft, chunks, status = None, 0, "ok"
+    ttft, chunks, status, prompt_tokens = None, 0, "ok", None
     try:
         async with client.stream("POST", f"{args.base_url}/v1/chat/completions",
                                  json=payload) as r:
@@ -57,7 +59,11 @@ async def send(client, args, messages, meta, writer, fh):
                 data = line[6:].strip()
                 if data == "[DONE]":
                     break
-                choices = json.loads(data).get("choices") or [{}]
+                obj = json.loads(data)
+                usage = obj.get("usage")
+                if usage and usage.get("prompt_tokens") is not None:
+                    prompt_tokens = usage["prompt_tokens"]
+                choices = obj.get("choices") or [{}]
                 if choices[0].get("delta", {}).get("content"):
                     if ttft is None:
                         ttft = time.perf_counter() - t0
@@ -71,6 +77,7 @@ async def send(client, args, messages, meta, writer, fh):
                      "e2e_s": f"{e2e:.4f}",
                      "output_chunks": chunks,
                      "prompt_chars": sum(len(m["content"]) for m in messages),
+                     "prompt_tokens": prompt_tokens if prompt_tokens is not None else "",
                      "status": status})
     fh.flush()
 
