@@ -6,15 +6,14 @@ When a spot GPU is preempted, its prefix KV cache is lost and every returning re
 
 ## Layout
 
-| Folder | What's in it | Owner |
-| --- | --- | --- |
-| `workload/` | `workload_gen.py`: sends requests to vLLM and logs TTFT per request | Person B |
-| `policy/` | `policy.py`: hotness ranking and the reactive/hybrid policies; `test_policy.py` | Person B |
-| `analysis/` | `plots.py`: the three midterm figures | Person B |
-| `tools/` | `mock_vllm_server.py`: a fake vLLM server for testing without a GPU | Person B |
-| `infra/` | vLLM + LMCache setup, preemption emulator, experiment scripts | Person A |
-| `results/` | CSV logs from runs (not committed) | |
-| `figures/` | PNG figures and their CSV tables | |
+| Folder | What's in it |
+| --- | --- |
+| `workload/` | `workload_gen.py`: sends requests to vLLM and logs TTFT per request |
+| `policy/` | `policy.py`: hotness ranking and the reactive/hybrid policies; `test_policy.py` |
+| `analysis/` | `plots.py`: the three midterm figures |
+| `tools/` | `mock_vllm_server.py`: a fake vLLM server for testing without a GPU |
+| `results/` | CSV logs from runs (not committed) |
+| `figures/` | PNG figures and their CSV tables |
 
 ## Setup
 
@@ -35,10 +34,31 @@ python workload/workload_gen.py --workload high_reuse --num-prefixes 64 --num-re
 
 - `--model` must match the name the vLLM server loaded exactly (use an Instruct model).
 - `--base-url` defaults to `http://localhost:8000`; run the generator on the VM, or point this at the VM.
-- Workloads: `high_reuse` (shared long system prompts, skewed popularity), `sharegpt` (needs `--sharegpt-path ShareGPT_V3_unfiltered_cleaned_split.json`), `low_reuse` (control).
-- If long ShareGPT conversations show up as `error` rows, lower `--max-turns`.
+- Workloads: `high_reuse` (shared long system prompts, skewed popularity), `sharegpt` (real multi-turn chats, below), `low_reuse` (control).
 
 **Midterm settings (tentative):** `--workload high_reuse --num-prefixes 64`. Revisit once the store bandwidth is measured.
+
+### ShareGPT workload
+
+Real multi-turn conversations. Each turn resends the whole conversation so far, so a turn reuses the previous turn's prefix, and `prompt_tokens` grows within a session.
+
+Download the dataset once (about 650 MB; `data/` and `.json` files are git-ignored, so it never gets committed):
+
+```bash
+mkdir -p data
+curl -L -o data/sharegpt.json https://huggingface.co/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered/resolve/main/ShareGPT_V3_unfiltered_cleaned_split.json
+```
+
+Run it:
+
+```bash
+python workload/workload_gen.py --workload sharegpt --sharegpt-path data/sharegpt.json \
+    --num-sessions 50 --rate 0.5 --think-time 5 --out results/sharegpt.csv
+```
+
+- `--num-sessions`: how many conversations; `--rate`: new conversations per second; `--think-time`: average seconds between turns.
+- `--max-turns` (default 8) and `--max-msg-chars` (default 4000) cap conversation length. If long conversations show up as `error` rows (too long for the server's `--max-model-len`), lower them.
+- ShareGPT prompts are much shorter than `high_reuse` ones (hundreds of tokens vs. about 5,700), so there is less cache to preserve and the strategies will differ less.
 
 ## 2. Policies
 
