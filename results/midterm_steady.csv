@@ -1,0 +1,4 @@
+strategy,runs,ttft_p50_ms,ttft_p99_ms,e2e_p50_ms,e2e_p99_ms,throughput_req_s,throughput_tok_s,storage_gb,replicated_gb
+none,1,217,1202,2543,6256,3.79,120,0.00,0.00
+write-through,1,215,1195,2441,6404,3.74,114,12.89,0.00
+hybrid,1,214,1182,2507,5924,3.83,115,2.42,2.17

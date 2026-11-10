@@ -1,0 +1,16 @@
+{
+ "run_id": "steady-write-through-r1",
+ "strategy": "write-through",
+ "rate": 4.0,
+ "seed": 1,
+ "storage_bytes": 12886235616,
+ "bytes_replicated": 0,
+ "prefixes": [],
+ "n_ok": 898,
+ "ttft_p50_ms": 215.4,
+ "ttft_p99_ms": 1194.7,
+ "e2e_p50_ms": 2441.1,
+ "e2e_p99_ms": 6403.8,
+ "throughput_req_s": 3.7416666666666667,
+ "throughput_tok_s": 113.95416666666667
+}

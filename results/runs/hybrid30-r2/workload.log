@@ -1,0 +1,37 @@
+Traceback (most recent call last):
+  File "/home/shawn/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shawn/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/shawn/repo/workload/workload_gen.py", line 199, in main
+    await run_independent(args, high_reuse_requests(args, rng), client, writer, fh)
+  File "/home/shawn/repo/workload/workload_gen.py", line 116, in run_independent
+    await asyncio.sleep(rng.expovariate(args.rate))  # Poisson arrivals
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shawn/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py", line 665, in sleep
+    return await future
+           ^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/shawn/repo/workload/workload_gen.py", line 208, in <module>
+    asyncio.run(main())
+  File "/home/shawn/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/home/shawn/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+Task exception was never retrieved
+future: <Task finished name='Task-15892' coro=<send() done, defined at /home/shawn/repo/workload/workload_gen.py:43> exception=ValueError('I/O operation on closed file.')>
+Traceback (most recent call last):
+  File "/home/shawn/repo/workload/workload_gen.py", line 74, in send
+    writer.writerow({**meta,
+  File "/home/shawn/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/csv.py", line 164, in writerow
+    return self.writer.writerow(self._dict_to_list(rowdict))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: I/O operation on closed file.

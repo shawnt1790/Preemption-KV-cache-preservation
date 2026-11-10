@@ -95,21 +95,37 @@ including any replacement server, must use the same value.
 After the fix: `LMCache hit tokens: 8448, need to load: 8448`, and TTFT 2.6 s cold vs 1.5 s
 loaded from Redis.
 
-## 7. Running commands from Windows / PowerShell
+## 7. Long jobs die when the ssh session drops; 10 req/s overloads the L4
+
+- `gcloud compute ssh` sessions drop now and then ("Software caused connection abort"), and that
+  kills anything attached to them. Start long jobs fully detached:
+  `setsid nohup bash emulator/run_midterm.sh --rate 4 > ~/logs/midterm.log 2>&1 < /dev/null &`
+  (plink may still sit open afterwards; the job keeps running, so check it from a new ssh).
+- At 10 req/s (64 prefixes × ~3,140 tokens, 64 output tokens), median TTFT is about 29 s:
+  requests just queue. Rate probe on a warm server: 2 → 193 ms, 4 → 261 ms, 6 → 395 ms median TTFT.
+  The midterm runs use **4 req/s**.
+
+## 8. Running commands from Windows / PowerShell
 
 - Quote arguments that contain commas: `"--accelerator=type=nvidia-l4,count=1"`.
 - Nested quotes inside `gcloud compute ssh --command="..."` get mangled. Write a script,
   `gcloud compute scp` it to the VM, then run it with `bash`.
 - `gcloud compute scp` (pscp) does not expand `~`. Use `kv-gpu:infra/`, not `kv-gpu:~/infra/`.
+- External IPs are ephemeral and change on every VM start, and PuTTY caches host keys by IP.
+  So the key prompt returns after each restart. Check the fingerprint matches the one from
+  before, then accept it as below.
 - The first ssh to a new VM asks to cache its host key, which hangs a non-interactive run.
   Connect once with `gcloud compute ssh VM --strict-host-key-checking=no --command="echo ok"`.
 - Files copied from Windows have CRLF line endings, so run `sed -i 's/\r$//' file` before `bash file`.
 - Long installs and downloads take longer than an interactive session; run them in the
   background or under `nohup`.
 
-## 8. Creating the GPU VM
+## 9. Creating the GPU VM
 
 - `GPUS_ALL_REGIONS` quota starts at 0 and has to be raised to 1 through a quota request.
+- Restarting a stopped kv-gpu can fail with `ZONE_RESOURCE_POOL_EXHAUSTED` (L4 stockout). A stopped VM
+  can only start in its own zone, so retry `gcloud compute instances start` every minute. Moving zones
+  means snapshotting the disk and recreating both VMs.
 - L4 capacity often runs out in a zone. Retry across zones (US and Europe, g2-standard-8, then
   g2-standard-4). `kv-store` must be in the same zone as `kv-gpu`.
 - Use STANDARD (on-demand) VMs, not spot. The emulator fakes preemptions; a real one would ruin a run.

@@ -1,0 +1,3 @@
+stopped
+vllm pid 9723 (config: /home/shawn/repo/infra/lmcache-local.yaml)
+ready after ~69 s

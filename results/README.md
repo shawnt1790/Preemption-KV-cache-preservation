@@ -41,6 +41,32 @@ Values are one LMCache chunk each: 256 tokens × 57,344 B = 14,680,064 B. Each f
 - The read rate sets the cost of a warm restart. The warm-restart test loaded 0.46 GB at about 0.35 GB/s,
   which matches the one-connection read.
 
-### Replacement startup time
+### Replacement startup time (2026-11-10)
 
-TODO (vLLM `ready after` is 75–130 s so far, with weights already cached on disk).
+Measured on a real start of the stopped kv-gpu (g2-standard-8, L4) after an L4 stockout cleared.
+
+| Phase | Time | Source |
+|---|---|---|
+| GCP start: capacity allocated, VM powered on | 54 s | `gcloud compute operations list` (start op, insert → end) |
+| OS boot to userspace | 12 s | `systemd-analyze` |
+| vLLM ready, cold disk (`serve.sh lmcache-remote.yaml`) | 160 s | 74 s loading weights, 34 s engine init (profile, KV alloc, warmup), ~50 s imports + LMCache |
+| **VM start → serving** | **~230 s** | plus the first request, which each emulator run measures (`t_first_served`) |
+
+- The emulator restarts vLLM on the same VM, with weights in the page cache: 75–130 s to ready. So **emulated
+  downtime is ~100–150 s shorter than a real replacement**; state this in the slides.
+- A truly new VM would also need the weights on its disk: either a pre-built image or snapshot (we have
+  `kv-gpu-snap`), or a ~15 GB Hugging Face download. Disks restored from a snapshot load lazily, so the
+  first weight read may be slower still.
+- Capacity is the biggest real-world risk: this restart waited **69 min** (14:02 → 15:11 local) for an L4 in
+  us-central1-a. On spot, that time comes on top of the startup above.
+
+## Midterm runs (2026-11-10)
+
+- `runs/<run_id>/`: one folder per run (requests.csv, events.json, summary.json). Made by `emulator/preempt.py`.
+- `midterm_preemption.csv`, `midterm_steady.csv`: repeat-averaged tables (`python emulator/summarize.py`).
+- `keymap.json`: prefix_id → Redis keys (12 chunks per prefix). Rebuild with `preempt.py register` if the workload changes.
+- Settings: high-reuse with 64 prefixes (~3,140 tokens each, hot set 11.3 GB), **4 req/s**, hybrid N = 8,
+  `BANDWIDTH_BPS = 7.1e8`, seeds 1 and 2. Why 4 req/s and every other decision: `docs/person-a-progress.md`.
+- KV-bytes check (plan): LMCache stores 176 MB per prefix vs. 180 MB from `prompt_tokens` × 57,344.
+  Correction factor 0.98 (the partial last chunk isn't stored).
+- Results and takeaways: `docs/midterm-person-a.md`.

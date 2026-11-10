@@ -1,0 +1,10 @@
+strategy,notice_s,runs,share_bytes_pct,share_requests_pct,gb_saved,ttft_before_p50_ms,ttft_after60_p50_ms,ttft_after60_p99_ms,after60_kept_p50_ms,after60_lost_p50_ms,downtime_s,kill_to_first_served_s,run_ids
+none,0,1,0,0,0.00,219,8971,15774,,8967,101,104,none0-r1
+none,30,2,0,0,0.00,218,5918,9727,,5907,98,105,none-r1 none-r2
+write-through,30,2,100,100,11.01,219,541,2200,540,1265,98,100,write-through-r1 write-through-r2
+reactive,0,2,0,0,0.00,220,12073,17808,,12060,99,105,reactive0-r1 reactive0-r2
+reactive,30,2,100,100,11.01,221,524,2489,522,1281,98,101,reactive30-r1 reactive30-r2
+reactive,120,2,100,100,11.01,222,538,3009,538,882,98,106,reactive120-r1 reactive120-r2
+hybrid,0,2,13,63,1.41,218,9843,14542,9790,9956,98,111,hybrid0-r1 hybrid0-r2
+hybrid,30,2,100,100,11.01,218,534,1874,531,1339,98,101,hybrid30-r1 hybrid30-r2
+hybrid,120,2,100,100,11.01,220,513,1898,512,872,99,101,hybrid120-r1 hybrid120-r2

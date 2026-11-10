@@ -33,9 +33,9 @@ nohup vllm serve "$MODEL" \
 VLLM_PID=$!; echo "vllm pid $VLLM_PID (config: $LMCACHE_CONFIG_FILE)"
 
 # Wait until the server answers; the first start also downloads ~15 GB of weights.
-for i in $(seq 1 180); do
-  if curl -sf "localhost:$PORT/health" >/dev/null; then echo "ready after ~$((i*5)) s"; exit 0; fi
+for i in $(seq 1 900); do   # 1 s polls, so callers get t_ready to within 1 s
+  if curl -sf "localhost:$PORT/health" >/dev/null; then echo "ready after ~$i s"; exit 0; fi
   if ! kill -0 "$VLLM_PID" 2>/dev/null; then echo "vllm exited; see ~/logs/vllm.log"; tail -20 "$HOME/logs/vllm.log"; exit 1; fi
-  sleep 5
+  sleep 1
 done
 echo "not ready after 15 min; see ~/logs/vllm.log"; exit 1

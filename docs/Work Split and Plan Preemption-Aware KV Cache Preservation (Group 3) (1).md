@@ -23,20 +23,22 @@ No preservation and write-through don't depend on notice length, so the midterm 
 
 **Weeks 3–4: Emulator and baselines**
 
-- [ ] Preemption emulator: notice signal, 0 / 30 / 120 s grace, kill server, clear GPU memory, start replacement
-- [ ] Timestamp every emulator step (notice, kill, restart, first request served)
-- [ ] Measure replacement startup time (VM ready, model loaded, first request served)
-- [ ] Configure write-through (LMCache remote backend)
-- [ ] Run no preservation and write-through end to end on the high-reuse workload
-- [ ] Logging: TTFT, throughput, bytes saved, storage used per run
+_Person A progress, decisions and deviations from this plan: `docs/person-a-progress.md`._
+
+- [x] Preemption emulator: notice signal, 0 / 30 / 120 s grace, kill server, clear GPU memory, start replacement
+- [x] Timestamp every emulator step (notice, kill, restart, first request served)
+- [x] Measure replacement startup time (VM ready, model loaded, first request served)
+- [x] Configure write-through (LMCache remote backend)
+- [x] Run no preservation and write-through end to end on the high-reuse workload
+- [x] Logging: TTFT, throughput, bytes saved, storage used per run
 
 **Weeks 5–6: Policies wired in and midterm runs**
 
-- [ ] Save path for flush-on-notice: write the blocks Person B's policy ranks, in order, until the window ends
-- [ ] Background replication path for the hybrid's hot set
-- [ ] Run all 8 configurations on the high-reuse workload (at least 2 runs each)
-- [ ] Steady-state runs for no preservation, write-through, and hybrid (throughput, p50/p99 latency, storage bytes)
-- [ ] Midterm slides: system built, emulator, methodology
+- [x] Save path for flush-on-notice: write the blocks Person B's policy ranks, in order, until the window ends
+- [x] Background replication path for the hybrid's hot set
+- [x] Run all 8 configurations on the high-reuse workload (at least 2 runs each)
+- [x] Steady-state runs for no preservation, write-through, and hybrid (throughput, p50/p99 latency, storage bytes)
+- [ ] Midterm slides: system built, emulator, methodology (content drafted in `docs/midterm-person-a.md`; slides not built yet)
 
 ### Person B checklist (weeks 1–6): workloads, policies, analysis
 
@@ -104,18 +106,18 @@ This compresses weeks 1–6 into about 25–30 hours of combined work. It's only
 
 ### Tue (\~6–8 h each)
 
-- [ ] Person A: Preemption emulator: notice, wait 0 / 30 / 120 s, kill vLLM, restart, timestamp each step
-- [ ] Person A: Measure remote store write and read bandwidth, and replacement startup time once
-- [ ] Person A: Run no preservation and write-through end to end; confirm the TTFT spike and the warm restart
+- [x] Person A: Preemption emulator: notice, wait 0 / 30 / 120 s, kill vLLM, restart, timestamp each step
+- [x] Person A: Measure remote store write and read bandwidth, and replacement startup time once
+- [x] Person A: Run no preservation and write-through end to end; confirm the TTFT spike and the warm restart
 - [ ] Person B: Hotness tracker over the request log
 - [ ] Person B: Reactive flush: rank keys by hotness, keep what fits in the window, delete the rest
 - [ ] Person B: Hybrid: top-N keys always kept, plus reactive flush on notice; try 2–3 values of N
 - [ ] Person B: Plotting scripts for the three midterm figures
-- [ ] Person A (Tue night): Script all 8 configurations × 2 runs plus steady-state runs; leave them running overnight
+- [x] Person A (Tue night): Script all 8 configurations × 2 runs plus steady-state runs; leave them running overnight
 
 ### Wed (before the checkpoint)
 
-- [ ] Person A: Check overnight runs; rerun any failures; collect overhead, startup time, and bandwidth numbers
+- [x] Person A: Check overnight runs; rerun any failures; collect overhead, startup time, and bandwidth numbers
 - [ ] Person B: Generate the figures: TTFT over time, cache preserved vs. notice length, steady-state overhead
 - [ ] Both: Build the 8 slides and rehearse once
 
@@ -286,4 +288,4 @@ Use 1 GB = 10^9 bytes for these tests.
 - [ ] Both (today): agree on this spec and the CSV columns
 - [x] Person A (today): stub `select_prefixes` that returns `ranked` unchanged, to build the emulator against
 - [ ] Person B (by Tue 2 pm): `policy.py` with both functions, passing the test cases above, plus a short README
-- [ ] Person A (Tue): swap the stub for the real `policy.py` and run one preemption end to end
+- [x] Person A (Tue): swap the stub for the real `policy.py` and run one preemption end to end
