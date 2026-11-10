@@ -1,0 +1,6 @@
+# LMCache config: local CPU tier only (no durable store yet).
+# Keys are defined in lmcache/inprocess/v1/config.py (lmcache 0.5.7).
+chunk_size: 256           # tokens per KV chunk; matches the 256-token hotness chunks in the plan
+local_cpu: true
+max_local_cpu_size: 10.0  # GB of host RAM for offloaded KV (VM has 31 GB)
+# With the durable Redis store on kv-store, use lmcache-remote.yaml instead.

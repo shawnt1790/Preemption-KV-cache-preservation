@@ -1,0 +1,2 @@
+date,start_local,stop_local,vms,hours,est_cost_usd,notes
+2026-11-09,21:20,00:09 (11-10),kv-gpu + kv-store,2.8,~3 (est. ~$1/h),"setup session: VMs, pinned stack, serving, Redis store, bandwidth; replace with the real cost from Billing > Reports"

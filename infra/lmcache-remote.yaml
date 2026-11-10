@@ -1,0 +1,9 @@
+# LMCache config: local CPU tier + durable Redis store on kv-store (write-through).
+# Every stored chunk is also written to Redis, so it survives a kv-gpu preemption.
+# Redis setup: setup_store.sh. lmcache 0.5.x has no lm:// server; remote stores go through
+# adapters (lmcache/inprocess/v1/storage_backend/connector/), here redis://.
+chunk_size: 256
+local_cpu: true
+max_local_cpu_size: 10.0
+remote_url: "redis://kv-store:6379"
+remote_serde: "naive"     # raw tensor bytes, no compression

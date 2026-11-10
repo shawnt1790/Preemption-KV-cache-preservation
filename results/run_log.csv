@@ -1,0 +1,4 @@
+run_id,date,strategy,workload,notice_s,hot_set_n,repeat,lmcache_config,ttft_p50_ms,ttft_p99_ms,first_ttft_after_restart_ms,throughput_tok_s,bytes_saved,storage_bytes,steady_overhead_pct,cost_usd,status,notes
+smoke-1,2026-11-09,none,smoke (1x 8.4K-token prompt),,,1,lmcache-local.yaml,,,,,,,,,ok,"cold TTFT 2591 ms, warm 181 ms (GPU prefix cache)"
+warm-restart-1,2026-11-10,write-through,smoke (1x 8.4K-token prompt),,,1,lmcache-remote.yaml,,,2596,,0,529000000,,,fail,"no Redis hits after restart: random hash seed; fixed with PYTHONHASHSEED=0"
+warm-restart-2,2026-11-10,write-through,smoke (1x 8.4K-token prompt),,,2,lmcache-remote.yaml,,,1473,,529000000,529000000,,,ok,"cold 2616 ms -> 1473 ms after restart (8448/8448 tokens loaded from Redis)"

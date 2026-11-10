@@ -14,12 +14,12 @@ No preservation and write-through don't depend on notice length, so the midterm 
 
 **Weeks 1–2: Setup**
 
-- [ ] Create the GCP GPU VM (L4 class) and pin vLLM and LMCache versions
-- [ ] Serve a 7–8B model with automatic prefix caching and the LMCache connector
-- [ ] Smoke test: a repeated long prompt shows lower TTFT on the second request
-- [ ] Stand up the remote LMCache server on a separate VM as the durable store
-- [ ] Measure remote store write and read bandwidth
-- [ ] Set up the shared repo, run log, and budget alerts
+- [x] Create the GCP GPU VM (L4 class) and pin vLLM and LMCache versions
+- [x] Serve a 7–8B model with automatic prefix caching and the LMCache connector
+- [x] Smoke test: a repeated long prompt shows lower TTFT on the second request
+- [x] Stand up the remote LMCache server on a separate VM as the durable store
+- [x] Measure remote store write and read bandwidth
+- [x] Set up the shared repo, run log, and budget alerts
 
 **Weeks 3–4: Emulator and baselines**
 
@@ -96,9 +96,9 @@ This compresses weeks 1–6 into about 25–30 hours of combined work. It's only
 ### Mon evening (\~3–4 h each)
 
 - [ ] Both (15 min): Agree on the policy interface and the hotness definition
-- [ ] Person A: Create the GCP GPU VM (L4 class) and a small CPU VM for the LMCache server
-- [ ] Person A: Install pinned vLLM + LMCache; serve a 7–8B instruct model with prefix caching and the LMCache connector
-- [ ] Person A: Smoke test: the same long prompt twice shows a lower TTFT the second time
+- [x] Person A: Create the GCP GPU VM (L4 class) and a small CPU VM for the LMCache server
+- [x] Person A: Install pinned vLLM + LMCache; serve a 7–8B instruct model with prefix caching and the LMCache connector
+- [x] Person A: Smoke test: the same long prompt twice shows a lower TTFT the second time
 - [ ] Person B: Workload generator: async streaming client that logs time, prefix ID, TTFT, and latency per request to CSV
 - [ ] Person B: High-reuse workload: a few shared 4–8K-token system prompts plus short questions
 
@@ -284,6 +284,6 @@ Use 1 GB = 10^9 bytes for these tests.
 ### Handoff
 
 - [ ] Both (today): agree on this spec and the CSV columns
-- [ ] Person A (today): stub `select_prefixes` that returns `ranked` unchanged, to build the emulator against
+- [x] Person A (today): stub `select_prefixes` that returns `ranked` unchanged, to build the emulator against
 - [ ] Person B (by Tue 2 pm): `policy.py` with both functions, passing the test cases above, plus a short README
 - [ ] Person A (Tue): swap the stub for the real `policy.py` and run one preemption end to end
