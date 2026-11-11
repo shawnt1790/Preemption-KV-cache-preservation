@@ -1,0 +1,3 @@
+stopped
+vllm pid 10213 (config: /home/shawn/repo/infra/lmcache-remote.yaml)
+ready after ~67 s

@@ -1,0 +1,7 @@
+strategy,notice_s,share_preserved_pct
+Reactive flush,0,0.0
+Reactive flush,30,100.0
+Reactive flush,120,100.0
+Hybrid (N=8),0,64.5
+Hybrid (N=8),30,100.0
+Hybrid (N=8),120,100.0

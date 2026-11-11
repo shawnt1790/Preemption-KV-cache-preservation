@@ -1,0 +1,16 @@
+{
+ "run_id": "steady-none-r1",
+ "strategy": "none",
+ "rate": 4.0,
+ "seed": 1,
+ "storage_bytes": 907392,
+ "bytes_replicated": 0,
+ "prefixes": [],
+ "n_ok": 909,
+ "ttft_p50_ms": 216.9,
+ "ttft_p99_ms": 1202.2,
+ "e2e_p50_ms": 2543.1,
+ "e2e_p99_ms": 6255.7,
+ "throughput_req_s": 3.7875,
+ "throughput_tok_s": 119.72916666666667
+}

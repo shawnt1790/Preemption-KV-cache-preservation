@@ -1,0 +1,29 @@
+{
+ "run_id": "steady-hybrid-r1",
+ "strategy": "hybrid",
+ "rate": 4.0,
+ "seed": 1,
+ "storage_bytes": 2416827288,
+ "bytes_replicated": 2174828544,
+ "prefixes": [
+  "hr-0",
+  "hr-1",
+  "hr-15",
+  "hr-2",
+  "hr-3",
+  "hr-4",
+  "hr-47",
+  "hr-5",
+  "hr-56",
+  "hr-6",
+  "hr-7",
+  "hr-8"
+ ],
+ "n_ok": 919,
+ "ttft_p50_ms": 214.0,
+ "ttft_p99_ms": 1182.0,
+ "e2e_p50_ms": 2506.9,
+ "e2e_p99_ms": 5924.0,
+ "throughput_req_s": 3.8291666666666666,
+ "throughput_tok_s": 115.07916666666667
+}
