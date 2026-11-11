@@ -59,5 +59,5 @@ lives. Results and slide content: `docs/midterm-person-a.md`. Setup problems and
 - [ ] Build Person A's slides from `docs/midterm-person-a.md` (plan line 39).
 - [ ] Person B: final figures from `results/runs/` (repeat-averaged or repeat 1), using none@0 for the 0 s figure.
 - [ ] After the midterm: ShareGPT and low-reuse runs, 3 repeats each, SpotLake-timed preemptions (plan weeks 7–8).
-- [ ] Commit and push `infra-setup`, then open a PR to main (results are only on this branch).
+- [x] Pushed `infra-setup` (2026-11-10). [ ] Open a PR to main.
 - [ ] Stop both VMs after each session (done 2026-11-10); the $15 budget alert will likely fire (≈ $1/h).
