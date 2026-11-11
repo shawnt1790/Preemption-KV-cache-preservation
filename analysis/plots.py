@@ -133,10 +133,12 @@ def cmd_ttft(args):
         centers, med = [], []
         for lo, hi in zip(edges[:-1], edges[1:]):
             m = (t >= lo) & (t < hi)
+            centers.append((lo + hi) / 2)
             if m.any():
-                centers.append((lo + hi) / 2)
                 med.append(float(np.median(y[m])))
                 rows.append([label, round((lo + hi) / 2, 1), round(med[-1], 1), int(m.sum())])
+            else:
+                med.append(np.nan)  # no requests in this bin: leave a gap, don't draw across it
         c = color_for(label, i)
         ax.plot(centers, med, color=c, lw=2, label=label, solid_capstyle="round")
 
@@ -220,14 +222,22 @@ def cmd_overhead(args):
         label, (log_path,) = parse_run(spec, need_events=False)
         rows = read_log(log_path)
         ok = [r for r in rows if r["status"] == "ok" and r["ttft_s"]]
+        if ok and (args.warmup_s or args.measure_s):
+            t0 = min(float(r["send_wall"]) for r in rows)
+            lo = t0 + args.warmup_s
+            hi = lo + args.measure_s if args.measure_s else float("inf")
+            ok = [r for r in ok if lo <= float(r["send_wall"]) < hi]
         if not ok:
             print(f"warning: no successful requests in {log_path}")
             continue
         ttft = np.array([float(r["ttft_s"]) for r in ok]) * 1000
         e2e = np.array([float(r["e2e_s"]) for r in ok]) * 1000
         sends = sorted(float(r["send_wall"]) for r in ok)
-        finish = max(float(r["send_wall"]) + float(r["e2e_s"]) for r in ok)
-        dur = max(finish - sends[0], 1e-9)
+        if args.measure_s:
+            dur = args.measure_s
+        else:
+            finish = max(float(r["send_wall"]) + float(r["e2e_s"]) for r in ok)
+            dur = max(finish - sends[0], 1e-9)
         stats.append([label, len(ok), round(len(ok) / dur, 3),
                       round(np.percentile(ttft, 50), 1), round(np.percentile(ttft, 99), 1),
                       round(np.percentile(e2e, 50), 1), round(np.percentile(e2e, 99), 1)])
@@ -296,6 +306,8 @@ def main():
     p = sub.add_parser("overhead", help="steady-state TTFT and throughput per strategy")
     p.add_argument("--run", action="append", required=True, help='"Label=log.csv"')
     p.add_argument("--out", default="figures/steady_state_overhead.png")
+    p.add_argument("--warmup-s", type=float, default=0, help="seconds at the start of each log to skip")
+    p.add_argument("--measure-s", type=float, default=0, help="length of the measured window (0 = to the end)")
     p.set_defaults(func=cmd_overhead)
 
     args = ap.parse_args()

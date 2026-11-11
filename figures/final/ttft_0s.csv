@@ -1,0 +1,85 @@
+strategy,seconds_since_kill,median_ttft_ms,requests
+No preservation,-55.0,222.4,39
+No preservation,-45.0,244.2,31
+No preservation,-35.0,235.4,44
+No preservation,-25.0,213.3,43
+No preservation,-15.0,211.8,38
+No preservation,-5.0,214.7,34
+No preservation,95.0,1418.8,2
+No preservation,105.0,11519.5,45
+No preservation,115.0,12647.4,38
+No preservation,125.0,11720.6,35
+No preservation,135.0,9198.0,34
+No preservation,145.0,4219.1,33
+No preservation,155.0,654.0,54
+No preservation,165.0,236.0,45
+No preservation,175.0,224.1,34
+No preservation,185.0,200.7,30
+No preservation,195.0,208.4,33
+No preservation,205.0,222.4,37
+No preservation,215.0,208.2,42
+No preservation,225.0,213.0,38
+No preservation,235.0,203.1,37
+Write-through,-55.0,215.4,40
+Write-through,-45.0,255.9,32
+Write-through,-35.0,229.7,44
+Write-through,-25.0,211.0,43
+Write-through,-15.0,206.6,38
+Write-through,-5.0,217.9,35
+Write-through,95.0,1997.4,5
+Write-through,105.0,4007.0,45
+Write-through,115.0,3112.6,38
+Write-through,125.0,681.9,35
+Write-through,135.0,392.4,35
+Write-through,145.0,239.0,33
+Write-through,155.0,343.8,54
+Write-through,165.0,288.4,45
+Write-through,175.0,264.3,34
+Write-through,185.0,218.3,30
+Write-through,195.0,224.4,34
+Write-through,205.0,275.3,39
+Write-through,215.0,260.7,44
+Write-through,225.0,251.9,40
+Write-through,235.0,238.7,41
+Reactive flush,-55.0,214.4,40
+Reactive flush,-45.0,240.2,32
+Reactive flush,-35.0,233.1,43
+Reactive flush,-25.0,223.2,42
+Reactive flush,-15.0,215.7,38
+Reactive flush,-5.0,224.6,34
+Reactive flush,95.0,4144.8,9
+Reactive flush,105.0,14180.4,45
+Reactive flush,115.0,14221.5,38
+Reactive flush,125.0,13783.8,36
+Reactive flush,135.0,11386.1,34
+Reactive flush,145.0,6044.9,33
+Reactive flush,155.0,2028.3,55
+Reactive flush,165.0,255.2,44
+Reactive flush,175.0,214.5,34
+Reactive flush,185.0,193.4,30
+Reactive flush,195.0,200.3,33
+Reactive flush,205.0,240.5,41
+Reactive flush,215.0,221.2,43
+Reactive flush,225.0,213.5,35
+Reactive flush,235.0,205.9,38
+Hybrid,-55.0,219.8,40
+Hybrid,-45.0,231.6,32
+Hybrid,-35.0,233.8,45
+Hybrid,-25.0,213.7,42
+Hybrid,-15.0,204.2,38
+Hybrid,-5.0,219.2,34
+Hybrid,95.0,3442.0,9
+Hybrid,105.0,11923.3,45
+Hybrid,115.0,11637.8,39
+Hybrid,125.0,11722.7,35
+Hybrid,135.0,10047.7,35
+Hybrid,145.0,7304.5,33
+Hybrid,155.0,3154.1,54
+Hybrid,165.0,739.1,43
+Hybrid,175.0,345.1,34
+Hybrid,185.0,230.7,30
+Hybrid,195.0,234.2,34
+Hybrid,205.0,313.8,41
+Hybrid,215.0,277.5,45
+Hybrid,225.0,258.9,37
+Hybrid,235.0,231.5,41

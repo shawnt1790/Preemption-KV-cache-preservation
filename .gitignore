@@ -1,7 +1,9 @@
 .venv/
 __pycache__/
 results/*.csv
-*.json# Emulator runs are shared so Person B can plot them (small: one CSV + JSON per run).
+*.json
+data/
+# Emulator runs are shared so Person B can plot them (small: one CSV + JSON per run).
 !results/runs/**/*.csv
 !results/runs/**/*.json
 !results/keymap.json
