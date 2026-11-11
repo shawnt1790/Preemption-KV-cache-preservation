@@ -1,0 +1,21 @@
+strategy,notice_s,share_preserved_pct
+Reactive flush,0.0,0.0
+Reactive flush,10.0,89.5
+Reactive flush,20.0,100.0
+Reactive flush,30.0,100.0
+Reactive flush,120.0,100.0
+Hybrid (N=4),0.0,51.2
+Hybrid (N=4),10.0,91.7
+Hybrid (N=4),20.0,100.0
+Hybrid (N=4),30.0,100.0
+Hybrid (N=4),120.0,100.0
+Hybrid (N=8),0.0,64.0
+Hybrid (N=8),10.0,93.5
+Hybrid (N=8),20.0,100.0
+Hybrid (N=8),30.0,100.0
+Hybrid (N=8),120.0,100.0
+Hybrid (N=16),0.0,76.8
+Hybrid (N=16),10.0,96.7
+Hybrid (N=16),20.0,100.0
+Hybrid (N=16),30.0,100.0
+Hybrid (N=16),120.0,100.0

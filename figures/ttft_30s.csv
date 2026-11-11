@@ -1,0 +1,117 @@
+strategy,seconds_since_kill,median_ttft_ms,requests
+No preservation,-57.5,208.1,39
+No preservation,-52.5,213.6,43
+No preservation,-47.5,231.4,44
+No preservation,-42.5,204.9,41
+No preservation,-37.5,234.1,32
+No preservation,-32.5,212.0,41
+No preservation,-27.5,204.8,42
+No preservation,-22.5,207.9,36
+No preservation,-17.5,193.0,34
+No preservation,-12.5,225.7,37
+No preservation,-7.5,208.1,30
+No preservation,-2.5,185.5,21
+No preservation,97.5,3073.2,15
+No preservation,102.5,6405.0,44
+No preservation,107.5,9350.0,38
+No preservation,112.5,7047.1,27
+No preservation,117.5,7087.4,44
+No preservation,122.5,5018.2,49
+No preservation,127.5,7407.1,43
+No preservation,132.5,5050.8,36
+No preservation,137.5,3343.6,39
+No preservation,142.5,2078.6,34
+No preservation,147.5,4197.1,34
+No preservation,152.5,4834.1,36
+No preservation,157.5,3466.2,40
+No preservation,162.5,2553.3,37
+No preservation,167.5,368.4,38
+No preservation,172.5,265.1,40
+No preservation,177.5,217.4,40
+Write-through,-57.5,214.5,40
+Write-through,-52.5,216.6,43
+Write-through,-47.5,239.8,45
+Write-through,-42.5,220.6,44
+Write-through,-37.5,225.8,34
+Write-through,-32.5,211.4,44
+Write-through,-27.5,206.2,44
+Write-through,-22.5,211.9,35
+Write-through,-17.5,206.2,36
+Write-through,-12.5,222.4,37
+Write-through,-7.5,205.8,32
+Write-through,-2.5,212.2,21
+Write-through,97.5,2041.0,20
+Write-through,102.5,1487.2,44
+Write-through,107.5,845.2,38
+Write-through,112.5,567.2,27
+Write-through,117.5,696.1,44
+Write-through,122.5,483.4,49
+Write-through,127.5,538.5,43
+Write-through,132.5,453.4,36
+Write-through,137.5,340.9,41
+Write-through,142.5,264.6,34
+Write-through,147.5,483.7,34
+Write-through,152.5,637.0,36
+Write-through,157.5,286.6,40
+Write-through,162.5,288.5,38
+Write-through,167.5,268.4,37
+Write-through,172.5,274.5,40
+Write-through,177.5,252.1,40
+Reactive flush,-57.5,203.2,40
+Reactive flush,-52.5,222.2,44
+Reactive flush,-47.5,245.1,45
+Reactive flush,-42.5,226.8,44
+Reactive flush,-37.5,232.7,35
+Reactive flush,-32.5,205.8,45
+Reactive flush,-27.5,211.9,44
+Reactive flush,-22.5,211.7,36
+Reactive flush,-17.5,200.6,36
+Reactive flush,-12.5,226.3,37
+Reactive flush,-7.5,213.8,32
+Reactive flush,-2.5,216.1,21
+Reactive flush,97.5,2383.2,20
+Reactive flush,102.5,1417.6,45
+Reactive flush,107.5,744.0,36
+Reactive flush,112.5,500.6,28
+Reactive flush,117.5,689.5,43
+Reactive flush,122.5,489.0,49
+Reactive flush,127.5,506.8,44
+Reactive flush,132.5,418.2,36
+Reactive flush,137.5,332.0,41
+Reactive flush,142.5,268.9,34
+Reactive flush,147.5,496.5,35
+Reactive flush,152.5,634.6,36
+Reactive flush,157.5,333.3,39
+Reactive flush,162.5,278.4,38
+Reactive flush,167.5,278.2,37
+Reactive flush,172.5,274.6,40
+Reactive flush,177.5,262.4,38
+Hybrid (N=8),-57.5,207.3,41
+Hybrid (N=8),-52.5,214.0,42
+Hybrid (N=8),-47.5,235.7,43
+Hybrid (N=8),-42.5,216.7,43
+Hybrid (N=8),-37.5,225.2,33
+Hybrid (N=8),-32.5,212.9,44
+Hybrid (N=8),-27.5,203.1,43
+Hybrid (N=8),-22.5,208.0,35
+Hybrid (N=8),-17.5,206.7,36
+Hybrid (N=8),-12.5,225.2,36
+Hybrid (N=8),-7.5,199.8,32
+Hybrid (N=8),-2.5,188.3,18
+Hybrid (N=8),97.5,1127.7,21
+Hybrid (N=8),102.5,1206.1,44
+Hybrid (N=8),107.5,838.3,37
+Hybrid (N=8),112.5,513.2,28
+Hybrid (N=8),117.5,858.6,43
+Hybrid (N=8),122.5,437.3,49
+Hybrid (N=8),127.5,464.6,44
+Hybrid (N=8),132.5,422.2,36
+Hybrid (N=8),137.5,334.6,41
+Hybrid (N=8),142.5,263.9,34
+Hybrid (N=8),147.5,508.5,34
+Hybrid (N=8),152.5,617.4,36
+Hybrid (N=8),157.5,293.9,40
+Hybrid (N=8),162.5,262.0,38
+Hybrid (N=8),167.5,274.6,37
+Hybrid (N=8),172.5,267.8,40
+Hybrid (N=8),177.5,252.7,39

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preemption emulator (Person A). Runs on kv-gpu, next to vLLM and the Redis store.
+"""Preemption emulator. Runs on kv-gpu, next to vLLM and the Redis store.
 
   register  Map each high-reuse prefix_id to the Redis keys of its KV chunks (run once).
   run       One preemption: workload -> notice -> wait -> kill -> keep what the strategy
@@ -319,8 +319,8 @@ def main():
     ap.add_argument("mode", choices=["register", "run", "steady"])
     ap.add_argument("--strategy", choices=["none", "write-through", "reactive", "hybrid"])
     ap.add_argument("--notice-s", type=float, default=30)
-    ap.add_argument("--hot-set-n", type=int, default=8)          # Person B's midterm setting
-    ap.add_argument("--num-prefixes", type=int, default=64)       # Person B's midterm setting
+    ap.add_argument("--hot-set-n", type=int, default=8)          # midterm setting
+    ap.add_argument("--num-prefixes", type=int, default=64)       # midterm setting
     ap.add_argument("--prefix-words", type=int, default=3000)
     ap.add_argument("--rate", type=float, default=10)
     ap.add_argument("--seed", type=int, default=1, help="workload seed; also the repeat number")

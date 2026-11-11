@@ -1,29 +1,30 @@
 #!/usr/bin/env python3
-"""Midterm figures for the spot KV-cache project (Person B).
+"""Midterm figures for the spot KV-cache project.
 
 Three subcommands, one per figure. Each writes a PNG (for slides) and a CSV of the
-plotted numbers (for the report / a table view).
+plotted numbers (for the report / a table view). `analysis/make_figures.sh` makes every
+midterm figure from the emulator runs in results/runs/.
 
-1) TTFT over time across a preemption, one line per strategy
+1) TTFT over time across a preemption, one line per strategy. Repeat a label to pool
+   its repeats; each run is aligned on its own kill time.
    python analysis/plots.py ttft \
-       --run "No preservation=results/none.csv,results/none_events.json" \
-       --run "Write-through=results/wt.csv,results/wt_events.json" \
-       --run "Reactive flush=results/reactive30.csv,results/reactive30_events.json" \
-       --run "Hybrid=results/hybrid30.csv,results/hybrid30_events.json" \
-       --out figures/ttft_preemption.png
+       --run "No preservation=results/runs/none-r1/requests.csv,results/runs/none-r1/events.json" \
+       --run "No preservation=results/runs/none-r2/requests.csv,results/runs/none-r2/events.json" \
+       --run "Hybrid=results/runs/hybrid30-r1/requests.csv,results/runs/hybrid30-r1/events.json" \
+       --out figures/ttft_30s.png
 
-   Each events file is written by Person A's emulator, wall-clock seconds:
+   Each events file is written by the emulator (emulator/preempt.py), wall-clock seconds:
        {"t_notice": 1794268000.0, "t_kill": 1794268030.0, "t_ready": 1794268045.0}
 
 2) Share of the hot cache preserved vs. notice length (needs only a log + bandwidth)
-   python analysis/plots.py preserved --log results/hr.csv --bandwidth-mbps 200 \
-       --hybrid-n 4 8 --model Qwen/Qwen2.5-7B-Instruct --out figures/preserved.png
+   python analysis/plots.py preserved --log results/runs/hybrid30-r1/requests.csv \
+       --t-notice 1794346414.03 --bandwidth-mbps 710 --hybrid-n 4 8 16 --out figures/preserved.png
 
-3) Steady-state overhead (runs with no preemption), one CSV per strategy
-   python analysis/plots.py overhead \
-       --run "No preservation=results/ss_none.csv" \
-       --run "Write-through=results/ss_wt.csv" \
-       --run "Hybrid=results/ss_hybrid.csv" \
+3) Steady-state overhead (runs with no preemption). Adding a summary.json per run adds a
+   storage panel; --warmup-s / --measure-s pick the measured window.
+   python analysis/plots.py overhead --warmup-s 60 --measure-s 240 \
+       --run "No preservation=results/runs/steady-none-r1/requests.csv,results/runs/steady-none-r1/summary.json" \
+       --run "Hybrid=results/runs/steady-hybrid-r1/requests.csv,results/runs/steady-hybrid-r1/summary.json" \
        --out figures/overhead.png
 
 Requires: pip install matplotlib numpy
@@ -84,10 +85,12 @@ def read_log(path):
 def parse_run(spec, need_events):
     if "=" not in spec:
         sys.exit(f'--run must look like "Label=log.csv{",events.json" if need_events else ""}": {spec}')
-    label, paths = spec.split("=", 1)
+    label, paths = spec.rsplit("=", 1)  # last "=", so labels like "Hybrid (N=8)" work
     parts = [p.strip() for p in paths.split(",")]
     if need_events and len(parts) != 2:
         sys.exit(f'--run needs a log and an events file: "Label=log.csv,events.json" ({spec})')
+    if not need_events and len(parts) > 2:
+        sys.exit(f'--run must look like "Label=log.csv" or "Label=log.csv,summary.json" ({spec})')
     return label.strip(), parts
 
 
@@ -113,16 +116,21 @@ def label_line_end(ax, x, y, text, color):
 def cmd_ttft(args):
     fig, ax = plt.subplots(figsize=(9, 4.8))
     rows, notice_offsets, ready_offsets = [], [], []
-    for i, spec in enumerate(args.run):
+    runs = {}  # label -> [(log, events), ...] in first-seen order; repeats are pooled
+    for spec in args.run:
         label, (log_path, ev_path) = parse_run(spec, need_events=True)
-        ev = json.load(open(ev_path))
-        t_kill = ev["t_kill"]
-        if "t_notice" in ev:
-            notice_offsets.append(ev["t_notice"] - t_kill)
-        if "t_ready" in ev:
-            ready_offsets.append(ev["t_ready"] - t_kill)
-        pts = [(float(r["send_wall"]) - t_kill, float(r["ttft_s"]))
-               for r in read_log(log_path) if r["status"] == "ok" and r["ttft_s"]]
+        runs.setdefault(label, []).append((log_path, ev_path))
+    for i, (label, pairs) in enumerate(runs.items()):
+        pts = []
+        for log_path, ev_path in pairs:
+            ev = json.load(open(ev_path))
+            t_kill = ev["t_kill"]
+            if "t_notice" in ev:
+                notice_offsets.append(ev["t_notice"] - t_kill)
+            if "t_ready" in ev:
+                ready_offsets.append(ev["t_ready"] - t_kill)
+            pts += [(float(r["send_wall"]) - t_kill, float(r["ttft_s"]))
+                    for r in read_log(log_path) if r["status"] == "ok" and r["ttft_s"]]
         pts = [p for p in pts if args.xmin <= p[0] <= args.xmax]
         if not pts:
             print(f"warning: no requests in the plotted window for {label}")
@@ -134,11 +142,15 @@ def cmd_ttft(args):
         for lo, hi in zip(edges[:-1], edges[1:]):
             m = (t >= lo) & (t < hi)
             if m.any():
+                if centers and lo + args.bin_s / 2 - centers[-1] > args.bin_s:
+                    centers.append(np.nan)  # no completed requests in between: break the line
+                    med.append(np.nan)
                 centers.append((lo + hi) / 2)
                 med.append(float(np.median(y[m])))
                 rows.append([label, round((lo + hi) / 2, 1), round(med[-1], 1), int(m.sum())])
         c = color_for(label, i)
-        ax.plot(centers, med, color=c, lw=2, label=label, solid_capstyle="round")
+        name = label if len(pairs) == 1 else f"{label} ({len(pairs)} runs)"
+        ax.plot(centers, med, color=c, lw=2, label=name, solid_capstyle="round")
 
     xt = ax.get_xaxis_transform()
     if ready_offsets:
@@ -187,23 +199,31 @@ def cmd_preserved(args):
     series = [("Reactive flush", 0)] + [(f"Hybrid (N={n})", n) for n in args.hybrid_n]
     fig, ax = plt.subplots(figsize=(8, 4.6))
     out_rows = []
+    main_n = args.main_n if args.main_n is not None else (args.hybrid_n[0] if args.hybrid_n else None)
+    extra = iter(EXTRA_COLORS * 2)
     for i, (label, n) in enumerate(series):
-        ys = [preserved_share(table, select_prefixes(ranked, sizes, bw, s, hot_set_n=n))
-              for s in notices]
-        c = color_for(label, i) if n == 0 else (STRATEGY_COLORS["Hybrid"] if i == 1 else EXTRA_COLORS[(i - 2) % 2])
+        share = lambda s: preserved_share(table, select_prefixes(ranked, sizes, bw, s, hot_set_n=n))
+        ys = [share(s) for s in notices]
+        if n == 0:
+            c = STRATEGY_COLORS["Reactive flush"]
+        elif n == main_n:
+            c = STRATEGY_COLORS["Hybrid"]  # the N the runs used gets the strategy's colour
+        else:
+            c = next(extra)
         ax.plot(notices, ys, color=c, lw=2, label=label, drawstyle="steps-post")
         for s in args.mark:
-            y = ys[int(s / 0.5)] if s <= args.max_notice else None
-            if y is not None:
+            y = share(s)
+            out_rows.append([label, s, round(y, 1)])
+            if s <= args.max_notice:  # marks past the axis still go in the CSV
                 ax.plot([s], [y], marker="o", ms=7, color=c, mec=SURFACE, mew=2, zorder=5)
-                out_rows.append([label, s, round(y, 1)])
     for s in args.mark:
-        ax.axvline(s, color=GRID, lw=1, zorder=0)
+        if s <= args.max_notice:
+            ax.axvline(s, color=GRID, lw=1, zorder=0)
     ax.set_xlabel("Preemption notice (s)")
     ax.set_ylabel("Share of recent prefill work preserved (%)")
     ax.set_ylim(0, 105)
     ax.set_xlim(0, args.max_notice * 1.03)
-    ax.set_xticks(args.mark)
+    ax.set_xticks([s for s in args.mark if s <= args.max_notice])
     ax.set_title(args.title)
     ax.text(0, -0.2, f"{len(ranked)} prefixes, {total_gb:.1f} GB of KV cache, "
             f"{args.bandwidth_mbps:g} MB/s to the remote store, 2 s kill margin",
@@ -215,25 +235,39 @@ def cmd_preserved(args):
 # ---------- figure 3: steady-state overhead ----------
 
 def cmd_overhead(args):
-    stats = []
+    stats, storage_gb = [], []
     for spec in args.run:
-        label, (log_path,) = parse_run(spec, need_events=False)
+        label, parts = parse_run(spec, need_events=False)
+        log_path = parts[0]
         rows = read_log(log_path)
         ok = [r for r in rows if r["status"] == "ok" and r["ttft_s"]]
+        if ok and (args.warmup_s or args.measure_s):
+            # Same window as the emulator's steady mode: requests sent in [t0, t0 + measure_s).
+            t0 = min(float(r["send_wall"]) for r in ok) + args.warmup_s
+            t1 = t0 + args.measure_s if args.measure_s else float("inf")
+            ok = [r for r in ok if t0 <= float(r["send_wall"]) < t1]
         if not ok:
             print(f"warning: no successful requests in {log_path}")
             continue
         ttft = np.array([float(r["ttft_s"]) for r in ok]) * 1000
         e2e = np.array([float(r["e2e_s"]) for r in ok]) * 1000
-        sends = sorted(float(r["send_wall"]) for r in ok)
-        finish = max(float(r["send_wall"]) + float(r["e2e_s"]) for r in ok)
-        dur = max(finish - sends[0], 1e-9)
+        if args.measure_s:
+            dur = args.measure_s
+        else:
+            sends = sorted(float(r["send_wall"]) for r in ok)
+            finish = max(float(r["send_wall"]) + float(r["e2e_s"]) for r in ok)
+            dur = max(finish - sends[0], 1e-9)
         stats.append([label, len(ok), round(len(ok) / dur, 3),
                       round(np.percentile(ttft, 50), 1), round(np.percentile(ttft, 99), 1),
                       round(np.percentile(e2e, 50), 1), round(np.percentile(e2e, 99), 1)])
+        storage_gb.append(json.load(open(parts[1]))["storage_bytes"] / 1e9 if len(parts) == 2 else None)
 
     labels = [s[0] for s in stats]
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(10, 4.4), gridspec_kw={"width_ratios": [1.6, 1]})
+    show_storage = all(g is not None for g in storage_gb)
+    if show_storage:
+        fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(13, 4.4), gridspec_kw={"width_ratios": [1.6, 1, 1]})
+    else:
+        fig, (a1, a2) = plt.subplots(1, 2, figsize=(10, 4.4), gridspec_kw={"width_ratios": [1.6, 1]})
     x = np.arange(len(stats))
     w = 0.36
     for j, (col, name, amount) in enumerate([(3, "p50", 0.0), (4, "p99", 0.5)]):
@@ -259,11 +293,25 @@ def cmd_overhead(args):
     a2.set_ylabel("Completed requests per second")
     a2.set_title("Throughput")
     a2.grid(axis="x", visible=False)
-    for a in (a1, a2):
+    axes = (a1, a2)
+    header = ["strategy", "requests", "req_per_s", "ttft_p50_ms", "ttft_p99_ms", "e2e_p50_ms", "e2e_p99_ms"]
+    if show_storage:
+        bars = a3.bar(x, storage_gb, width=0.6, color=[color_for(l, i) for i, l in enumerate(labels)],
+                      edgecolor=SURFACE, linewidth=2)
+        for b, v in zip(bars, storage_gb):
+            a3.annotate(f"{v:.1f}", (b.get_x() + b.get_width() / 2, v), xytext=(0, 3),
+                        textcoords="offset points", ha="center", fontsize=9, color=INK)
+        a3.set_xticks(x, labels)
+        a3.set_ylabel("GB in the remote store")
+        a3.set_title("Storage")
+        a3.grid(axis="x", visible=False)
+        axes = (a1, a2, a3)
+        stats = [s + [round(g, 2)] for s, g in zip(stats, storage_gb)]
+        header.append("storage_gb")
+    for a in axes:
         plt.setp(a.get_xticklabels(), rotation=15, ha="right")
     fig.tight_layout()
-    save(fig, args.out, stats,
-         ["strategy", "requests", "req_per_s", "ttft_p50_ms", "ttft_p99_ms", "e2e_p50_ms", "e2e_p99_ms"])
+    save(fig, args.out, stats, header)
 
 
 def main():
@@ -271,7 +319,8 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("ttft", help="TTFT over time across a preemption")
-    p.add_argument("--run", action="append", required=True, help='"Label=log.csv,events.json"')
+    p.add_argument("--run", action="append", required=True,
+                   help='"Label=log.csv,events.json"; repeat a label to pool its repeats')
     p.add_argument("--out", default="figures/ttft_preemption.png")
     p.add_argument("--bin-s", type=float, default=5.0)
     p.add_argument("--xmin", type=float, default=-60.0)
@@ -285,6 +334,7 @@ def main():
     p.add_argument("--model", default="Qwen/Qwen2.5-7B-Instruct")
     p.add_argument("--kv-bytes", type=int, help="override KV bytes per token")
     p.add_argument("--hybrid-n", type=int, nargs="*", default=[4])
+    p.add_argument("--main-n", type=int, help="the N the runs used, drawn in the hybrid colour (default: first --hybrid-n)")
     p.add_argument("--t-notice", type=float, help="wall time of the notice (default: end of log)")
     p.add_argument("--window-s", type=float, default=300)
     p.add_argument("--max-notice", type=float, default=120)
@@ -294,7 +344,10 @@ def main():
     p.set_defaults(func=cmd_preserved)
 
     p = sub.add_parser("overhead", help="steady-state TTFT and throughput per strategy")
-    p.add_argument("--run", action="append", required=True, help='"Label=log.csv"')
+    p.add_argument("--run", action="append", required=True,
+                   help='"Label=log.csv" or "Label=log.csv,summary.json" (adds a storage panel)')
+    p.add_argument("--warmup-s", type=float, default=0, help="skip requests sent this soon after the first")
+    p.add_argument("--measure-s", type=float, default=0, help="measured window length (0: to the end)")
     p.add_argument("--out", default="figures/steady_state_overhead.png")
     p.set_defaults(func=cmd_overhead)
 

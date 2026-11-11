@@ -1,8 +1,13 @@
 .venv/
 __pycache__/
+data/
+*.json
 results/*.csv
-*.json# Emulator runs are shared so Person B can plot them (small: one CSV + JSON per run).
+# Emulator runs and the midterm tables are committed so anyone can re-plot them
+# (small: one CSV + JSON per run).
 !results/runs/**/*.csv
 !results/runs/**/*.json
 !results/keymap.json
 !results/midterm_*.csv
+!results/run_log.csv
+!results/spend_log.csv
