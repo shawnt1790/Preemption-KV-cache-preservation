@@ -13,7 +13,7 @@ lives. Results and slide content: `docs/midterm-person-a.md`. Setup problems and
 | Tue 11-10 14:02–15:11 | L4 stockout on restart (69 min). In-zone retry won; a disk snapshot `kv-gpu-snap` is kept as a fallback. Real replacement startup time measured on that boot. |
 | Tue afternoon | Merged Person B's policy, plots and workload. Built the emulator, the prefix → Redis key map, and a pilot run. Rate probe → 4 req/s. |
 | Tue 15:43–18:35 local | All 8 configurations × 2 runs + 3 steady-state runs, no failures. |
-| Tue evening | Follow-up runs: none and write-through at notice 0 s (kill-time-matched), plus a 2 req/s diagnostic. |
+| Tue 18:35–19:31 local | Follow-ups: none and write-through at notice 0 s (kill-time-matched, both seeds), plus the 2 req/s diagnostic, which confirmed head-of-line blocking. VMs stopped at 20:09. |
 
 ## What exists
 
@@ -55,10 +55,9 @@ lives. Results and slide content: `docs/midterm-person-a.md`. Setup problems and
 
 ## Open items
 
-- [ ] Fold in the follow-ups (none0 / write-through0 for seeds 1–2, diag-*-rate2) once they finish.
-      Copy `results/runs` + `run_log.csv` from kv-gpu, rerun `summarize.py`, update `docs/midterm-person-a.md`.
+- [x] Follow-ups folded into `results/midterm_*.csv` and `docs/midterm-person-a.md` (2026-11-10).
 - [ ] Build Person A's slides from `docs/midterm-person-a.md` (plan line 39).
 - [ ] Person B: final figures from `results/runs/` (repeat-averaged or repeat 1), using none@0 for the 0 s figure.
 - [ ] After the midterm: ShareGPT and low-reuse runs, 3 repeats each, SpotLake-timed preemptions (plan weeks 7–8).
 - [ ] Commit and push `infra-setup`, then open a PR to main (results are only on this branch).
-- [ ] Stop both VMs after each session; the $15 budget alert will likely fire (≈ $1/h).
+- [ ] Stop both VMs after each session (done 2026-11-10); the $15 budget alert will likely fire (≈ $1/h).

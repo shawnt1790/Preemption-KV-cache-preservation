@@ -1,2 +1,3 @@
 date,start_local,stop_local,vms,hours,est_cost_usd,notes
 2026-11-09,21:20,00:09 (11-10),kv-gpu + kv-store,2.8,~3 (est. ~$1/h),"setup session: VMs, pinned stack, serving, Redis store, bandwidth; replace with the real cost from Billing > Reports"
+2026-11-10,14:02,20:09,kv-gpu (5.0 h from 15:11) + kv-store (6.1 h),6.1,~6 (est.),"midterm session: 69 min L4 stockout, emulator, 25 runs; snapshot kv-gpu-snap 33 GB (~$1/month); replace with Billing > Reports"

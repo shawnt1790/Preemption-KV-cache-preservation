@@ -1,0 +1,6 @@
+stopped
+vllm pid 22703 (config: /home/shawn/repo/infra/lmcache-remote.yaml)
+ready after ~70 s
+killed
+vllm pid 23117 (config: /home/shawn/repo/infra/lmcache-remote.yaml)
+ready after ~69 s
