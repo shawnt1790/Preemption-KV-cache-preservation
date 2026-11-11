@@ -66,7 +66,7 @@ Measured on a real start of the stopped kv-gpu (g2-standard-8, L4) after an L4 s
 - `midterm_preemption.csv`, `midterm_steady.csv`: repeat-averaged tables (`python emulator/summarize.py`).
 - `keymap.json`: prefix_id → Redis keys (12 chunks per prefix). Rebuild with `preempt.py register` if the workload changes.
 - Settings: high-reuse with 64 prefixes (~3,140 tokens each, hot set 11.3 GB), **4 req/s**, hybrid N = 8,
-  `BANDWIDTH_BPS = 7.1e8`, seeds 1 and 2. Why 4 req/s and every other decision: `docs/person-a-progress.md`.
+  `BANDWIDTH_BPS = 7.1e8`, seeds 1 and 2. Why 4 req/s and every other decision: `docs/progress-log.md`.
 - KV-bytes check (plan): LMCache stores 176 MB per prefix vs. 180 MB from `prompt_tokens` × 57,344.
   Correction factor 0.98 (the partial last chunk isn't stored).
-- Results and takeaways: `docs/midterm-person-a.md`.
+- Results and takeaways: `docs/midterm.md`; figures: `bash analysis/make_figures.sh`.

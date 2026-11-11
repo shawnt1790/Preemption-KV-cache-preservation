@@ -1,6 +1,6 @@
-"""Hotness ranking and preservation policies (Person B).
+"""Hotness ranking and preservation policies.
 
-Implements the "Spec: hotness score and policy interface" from the plan doc.
+Implements the "Spec: hotness score and policy interface" from docs/plan.md.
 
     ranked, sizes = rank_prefixes("results/hr.csv", t_notice, KV_BYTES_PER_TOKEN["Qwen/Qwen2.5-7B-Instruct"])
     keep = select_prefixes(ranked, sizes, bandwidth_Bps=200e6, notice_s=30)               # reactive flush

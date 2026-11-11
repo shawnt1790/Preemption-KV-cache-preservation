@@ -7,6 +7,7 @@
 import csv
 import json
 import statistics
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -45,6 +46,7 @@ def table(rows, cols):
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")  # the tables use → ; Windows consoles default to cp1252
     pre, steady = defaultdict(list), defaultdict(list)
     for f in sorted(RESULTS.glob("runs/*/summary.json")):
         s = json.loads(f.read_text())

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Workload generator for the spot KV-cache preservation project (Person B).
+"""Workload generator for the spot KV-cache preservation project.
 
 Sends streaming chat requests to a vLLM OpenAI-compatible server and logs
 per-request TTFT and end-to-end latency to a CSV file.

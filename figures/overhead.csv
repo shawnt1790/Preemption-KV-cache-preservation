@@ -1,0 +1,4 @@
+strategy,requests,req_per_s,ttft_p50_ms,ttft_p99_ms,e2e_p50_ms,e2e_p99_ms,storage_gb
+No preservation,908,3.783,216.9,1201.6,2542.6,6252.3,0.0
+Write-through,897,3.737,215.4,1192.3,2440.9,6264.0,12.89
+Hybrid (N=8),918,3.825,214.0,1181.9,2505.2,5923.9,2.42

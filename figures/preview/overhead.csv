@@ -1,4 +1,0 @@
-strategy,requests,req_per_s,ttft_p50_ms,ttft_p99_ms,e2e_p50_ms,e2e_p99_ms
-No preservation,1149,3.835,232.5,16418.2,2973.5,30583.3
-Write-through,1138,3.798,228.6,16864.9,2817.3,31071.7
-Hybrid,1160,3.872,230.7,16431.5,2857.0,30599.7
